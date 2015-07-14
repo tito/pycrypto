@@ -37,5 +37,14 @@
 # error "stdint.h and inttypes.h not found"
 #endif
 
-
 #endif /* PYCRYPTO_COMMON_H */
+
+// Reference: http://stackoverflow.com/questions/1489932/how-to-concatenate-twice-with-the-c-preprocessor-and-expand-a-macro-as-in-arg
+// This is not inside the PYCRYPTO_COMMON_H block as we need MODULE_NAME to be defined
+#ifndef PCFN
+#ifdef MODULE_NAME
+#define PASTER(x,y) (x ## _ ## y)
+#define EVALUATOR(x,y) PASTER(x,y)
+#define PCFN(fun) EVALUATOR(fun, MODULE_NAME)
+#endif
+#endif

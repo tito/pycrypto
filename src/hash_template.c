@@ -21,7 +21,7 @@
  * SOFTWARE.
  * ===================================================================
  */
-  
+
 /* Basic object type */
 
 #include "pycrypto_common.h"
@@ -41,31 +41,31 @@
 typedef struct {
 	PyObject_HEAD
 	hash_state st;
-} ALGobject;
+} PCFN(ALGobject);
 
 /* Please see PEP3123 for a discussion of PyObject_HEAD and changes made in 3.x to make it conform to Standard C.
  * These changes also dictate using Py_TYPE to check type, and PyVarObject_HEAD_INIT(NULL, 0) to initialize
  */
-staticforward PyTypeObject ALGtype;
+staticforward PyTypeObject PCFN(ALGtype);
 
-static char ALG__doc__[] =
+static char PCFN(ALG__doc__)[] =
 "Class that implements a " _MODULE_STRING " hash.";
 
-static ALGobject *
-newALGobject(void)
+static PCFN(ALGobject) *
+PCFN(newALGobject)(void)
 {
-	ALGobject *new;
+	PCFN(ALGobject) *new;
 
-	new = PyObject_New(ALGobject, &ALGtype);
+	new = PyObject_New(PCFN(ALGobject), &PCFN(ALGtype));
 	return new;
 }
 
 /* Internal methods for a hashing object */
 
 static void
-ALG_dealloc(PyObject *ptr)
+PCFN(ALG_dealloc)(PyObject *ptr)
 {
-	ALGobject *self = (ALGobject *)ptr;
+	PCFN(ALGobject) *self = (PCFN(ALGobject) *)ptr;
 
 	/* Overwrite the contents of the object */
 	memset((char*)&(self->st), 0, sizeof(hash_state));
@@ -75,7 +75,7 @@ ALG_dealloc(PyObject *ptr)
 
 /* External methods for a hashing object */
 
-static char ALG_copy__doc__[] =
+static char PCFN(ALG_copy__doc__)[] =
 "copy()\n"
 "Return a copy (\"clone\") of the hash object.\n"
 "\n"
@@ -87,22 +87,22 @@ static char ALG_copy__doc__[] =
 ":Return: A hash object of the same type\n";
 
 static PyObject *
-ALG_copy(ALGobject *self, PyObject *args)
+PCFN(ALG_copy)(PCFN(ALGobject) *self, PyObject *args)
 {
-	ALGobject *newobj;
+	PCFN(ALGobject) *newobj;
 
 	if (!PyArg_ParseTuple(args, "")) {
 		return NULL;
 	}
-	
-	if ( (newobj = newALGobject())==NULL)
+
+	if ( (newobj = PCFN(newALGobject)())==NULL)
 		return NULL;
 
 	hash_copy(&(self->st), &(newobj->st));
-	return((PyObject *)newobj); 
+	return((PyObject *)newobj);
 }
 
-static char ALG_digest__doc__[] =
+static char PCFN(ALG_digest__doc__)[] =
 "digest()\n"
 "Return the **binary** (non-printable) digest of the message that has been hashed so far.\n"
 "\n"
@@ -113,7 +113,7 @@ static char ALG_digest__doc__[] =
 "characters, including null bytes.\n";
 
 static PyObject *
-ALG_digest(ALGobject *self, PyObject *args)
+PCFN(ALG_digest)(PCFN(ALGobject) *self, PyObject *args)
 {
 	if (!PyArg_ParseTuple(args, ""))
 		return NULL;
@@ -121,7 +121,7 @@ ALG_digest(ALGobject *self, PyObject *args)
 	return (PyObject *)hash_digest(&(self->st));
 }
 
-static char ALG_hexdigest__doc__[] =
+static char PCFN(ALG_hexdigest__doc__)[] =
 "hexdigest()\n"
 "Return the **printable** digest of the message that has been hashed so far.\n"
 "\n"
@@ -131,7 +131,7 @@ static char ALG_hexdigest__doc__[] =
 "hexadecimal ASCII digits.\n";
 
 static PyObject *
-ALG_hexdigest(ALGobject *self, PyObject *args)
+PCFN(ALG_hexdigest)(PCFN(ALGobject) *self, PyObject *args)
 {
 	PyObject *value, *retval;
 	unsigned char *raw_digest, *hex_digest;
@@ -167,7 +167,7 @@ ALG_hexdigest(ALGobject *self, PyObject *args)
 	return retval;
 }
 
-static char ALG_update__doc__[] =
+static char PCFN(ALG_update__doc__)[] =
 "update(data)\n"
 "Continue hashing of a message by consuming the next chunk of data.\n"
 "\n"
@@ -185,7 +185,7 @@ static char ALG_update__doc__[] =
 "    The next chunk of the message being hashed.\n";
 
 static PyObject *
-ALG_update(ALGobject *self, PyObject *args)
+PCFN(ALG_update)(PCFN(ALGobject) *self, PyObject *args)
 {
 	unsigned char *cp;
 	int len;
@@ -204,7 +204,7 @@ ALG_update(ALGobject *self, PyObject *args)
 }
 
 /** Forward declaration for this module's new() method **/
-static char ALG_new__doc__[] =
+static char PCFN(ALG_new__doc__)[] =
 "new(data=None)\n"
 "Return a fresh instance of the hash object.\n"
 "\n"
@@ -216,19 +216,19 @@ static char ALG_new__doc__[] =
 "\n"
 ":Return: A `" _MODULE_STRING "` object\n";
 
-static PyObject *ALG_new(PyObject*, PyObject*);
+static PyObject *PCFN(ALG_new)(PyObject*, PyObject*);
 
-static PyMethodDef ALG_methods[] = {
-	{"copy", (PyCFunction)ALG_copy, METH_VARARGS, ALG_copy__doc__},
-	{"digest", (PyCFunction)ALG_digest, METH_VARARGS, ALG_digest__doc__},
-	{"hexdigest", (PyCFunction)ALG_hexdigest, METH_VARARGS, ALG_hexdigest__doc__},
-	{"update", (PyCFunction)ALG_update, METH_VARARGS, ALG_update__doc__},
-	{"new", (PyCFunction)ALG_new, METH_VARARGS, ALG_new__doc__},
+static PyMethodDef PCFN(ALG_methods)[] = {
+	{"copy", (PyCFunction)PCFN(ALG_copy), METH_VARARGS, PCFN(ALG_copy__doc__)},
+	{"digest", (PyCFunction)PCFN(ALG_digest), METH_VARARGS, PCFN(ALG_digest__doc__)},
+	{"hexdigest", (PyCFunction)PCFN(ALG_hexdigest), METH_VARARGS, PCFN(ALG_hexdigest__doc__)},
+	{"update", (PyCFunction)PCFN(ALG_update), METH_VARARGS, PCFN(ALG_update__doc__)},
+	{"new", (PyCFunction)PCFN(ALG_new), METH_VARARGS, PCFN(ALG_new__doc__)},
 	{NULL,			NULL}		/* sentinel */
 };
 
 static PyObject *
-ALG_getattro(PyObject *self, PyObject *attr)
+PCFN(ALG_getattro)(PyObject *self, PyObject *attr)
 {
 	if (!PyString_Check(attr))
 		goto generic;
@@ -246,17 +246,17 @@ ALG_getattro(PyObject *self, PyObject *attr)
 		PyErr_SetObject(PyExc_AttributeError, attr);
 		return NULL;
 	}
-	return Py_FindMethod(ALG_methods, (PyObject *)self, PyString_AsString(attr));
+	return Py_FindMethod(PCFN(ALG_methods), (PyObject *)self, PyString_AsString(attr));
 #endif
 }
 
-static PyTypeObject ALGtype = {
+static PyTypeObject PCFN(ALGtype) = {
 	PyVarObject_HEAD_INIT(NULL, 0)  /* deferred type init for compilation on Windows, type will be filled in at runtime */
  	_MODULE_STRING,			/*tp_name*/
- 	sizeof(ALGobject),	/*tp_size*/
+ 	sizeof(PCFN(ALGobject)),	/*tp_size*/
  	0,			/*tp_itemsize*/
  	/* methods */
-	(destructor) ALG_dealloc, /*tp_dealloc*/
+	(destructor) PCFN(ALG_dealloc), /*tp_dealloc*/
  	0,			/*tp_print*/
 	0,			/*tp_getattr*/
  	0,			/*tp_setattr*/
@@ -268,11 +268,11 @@ static PyTypeObject ALGtype = {
 	0,				/*tp_hash*/
 	0,				/*tp_call*/
 	0,				/*tp_str*/
-	ALG_getattro,	/*tp_getattro*/
+	PCFN(ALG_getattro),	/*tp_getattro*/
 	0,				/*tp_setattro*/
 	0,				/*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT,		/*tp_flags*/
-	ALG__doc__,	/*tp_doc*/
+	PCFN(ALG__doc__),	/*tp_doc*/
 	0,				/*tp_traverse*/
 	0,				/*tp_clear*/
 	0,				/*tp_richcompare*/
@@ -280,7 +280,7 @@ static PyTypeObject ALGtype = {
 #if PYTHON_API_VERSION >= 1011          /* Python 2.2 and later */
 	0,				/*tp_iter*/
 	0,				/*tp_iternext*/
-	ALG_methods,		/*tp_methods*/
+	PCFN(ALG_methods),		/*tp_methods*/
 #endif
  };
 
@@ -288,13 +288,13 @@ static PyTypeObject ALGtype = {
 
 /** This method belong to both the module and the hash object **/
 static PyObject *
-ALG_new(PyObject *self, PyObject *args)
+PCFN(ALG_new)(PyObject *self, PyObject *args)
 {
-        ALGobject *new;
+        PCFN(ALGobject) *new;
 	unsigned char *cp = NULL;
 	int len;
-	
-	if ((new = newALGobject()) == NULL)
+
+	if ((new = PCFN(newALGobject)()) == NULL)
 		return NULL;
 
 	if (!PyArg_ParseTuple(args, "|s#",
@@ -306,7 +306,7 @@ ALG_new(PyObject *self, PyObject *args)
         hash_init(&(new->st));
 
 	if (PyErr_Occurred()) {
-		Py_DECREF(new); 
+		Py_DECREF(new);
 		return NULL;
 	}
 	if (cp) {
@@ -320,8 +320,8 @@ ALG_new(PyObject *self, PyObject *args)
 
 /* List of functions exported by this module */
 
-static struct PyMethodDef ALG_functions[] = {
-	{"new", (PyCFunction)ALG_new, METH_VARARGS, ALG_new__doc__},
+static struct PyMethodDef PCFN(ALG_functions)[] = {
+	{"new", (PyCFunction)PCFN(ALG_new), METH_VARARGS, PCFN(ALG_new__doc__)},
 	{NULL,			NULL}		 /* Sentinel */
 };
 
@@ -331,7 +331,7 @@ static struct PyModuleDef moduledef = {
 	"Crypto.Hash." _MODULE_STRING,  /* m_name */
 	MODULE__doc__,                  /* m_doc */
 	-1,                             /* m_size */
-	ALG_functions,                  /* m_methods */
+	PCFN(ALG_functions),                  /* m_methods */
 	NULL,                           /* m_reload */
 	NULL,                           /* m_traverse */
 	NULL,                           /* m_clear */
@@ -347,21 +347,21 @@ _MODULE_NAME (void)
 	PyObject *m = NULL;
 	PyObject *__all__ = NULL;
 
-	if (PyType_Ready(&ALGtype) < 0)
+	if (PyType_Ready(&PCFN(ALGtype)) < 0)
 		goto errout;
 
 	/* Create the module and add the functions */
 #ifdef IS_PY3K
 	m = PyModule_Create(&moduledef);
 #else
-	m = Py_InitModule3("Crypto.Hash." _MODULE_STRING, ALG_functions, MODULE__doc__);
+	m = Py_InitModule3("Crypto.Hash." _MODULE_STRING, PCFN(ALG_functions), MODULE__doc__);
 #endif
 	if (m == NULL)
 		goto errout;
 
 	/* Add the type object to the module (using the name of the module itself),
 	 * so that its methods docstrings are discoverable by introspection tools. */
-	PyObject_SetAttrString(m, _MODULE_STRING, (PyObject *)&ALGtype);
+	PyObject_SetAttrString(m, _MODULE_STRING, (PyObject *)&PCFN(ALGtype));
 
 	/* Add some symbolic constants to the module */
 	PyModule_AddIntConstant(m, "digest_size", DIGEST_SIZE);
